@@ -1,3 +1,11 @@
+#!/usr/bin/python
+import smbus
 
-from smbus2 import SMBus
+#SLAVE READ ADDRESS IS: 0X55h 
+
+bus = smbus.SMBus(1)
+
+DEVICE_ADDRESS = 0x55
+
+
 
