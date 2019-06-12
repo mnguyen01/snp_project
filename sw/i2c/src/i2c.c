@@ -4,19 +4,24 @@
 #include <string.h>
 #include <stdint.h>
 
+//Define constant
 #define SLAVE_ADDR 0x55 //Slave Addres
 #define BAUDERATE 100000 //100kHz
 #define RAM_REG 0x04 //EEPROM address register. Each address has 16 bytes of data. 
+
+//Define function prototype
+void get_mac_addr(const char * mac, char * mac_string);
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // To test without the NFC Shield, enter manually a MAC address : 94:B1:0A:CD:1C:81 into char tab[].
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main(void){
-	char buf[] = {RAM_REG};
-	char buf2[16];
+	char buf[1] = {RAM_REG};
+	unsigned char buf2[16] = {'\0'};
 
-	char* bt_adr;
+	char mac_string[12 + 5 + 1] = { '\0' }; // 6 char + 5 `:` + NULL
 
 	if(!bcm2835_init()){
 		printf("bcm2835_init failed. Are you running as root??\n");
@@ -36,25 +41,13 @@ int main(void){
 	bcm2835_i2c_read(buf2,16);
 	bcm2835_i2c_end();
 
-	char integer_string[16];
-	strcpy(integer_string,"");
-    char tmp[32];
-    int lol;
-    int i = 0;
-	printf("%s\n",integer_string );
-    for (i = sizeof(buf2)-6; i>=5; i--)
-    {	
-    	lol = 0;
-    	strcpy(tmp,"");
-        lol = buf2[i];
-        sprintf(tmp, "%x", lol);
-        strcat(integer_string ,tmp);
-        if (i!=5)
-        {
-        	strcat(integer_string ,":");
-        }
-
-    }
-	printf("Read Buf2 is : %s\n",integer_string);
+	get_mac_addr(buf2, mac_string);
 
 }	
+
+void get_mac_addr(const char * mac, char * mac_string)
+{
+    snprintf(mac_string, sizeof(mac_string),
+             "%02x:%02x:%02x:%02x:%02x:%02x",
+             mac[10], mac[9], mac[8], mac[7], mac[6], mac[5]);
+}
