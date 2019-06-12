@@ -43,6 +43,8 @@ int main(void){
 
 	get_mac_addr(buf2, mac_string);
 
+	return 0;
+
 }	
 
 void get_mac_addr(const char * mac, char * mac_string)
